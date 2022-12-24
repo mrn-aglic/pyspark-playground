@@ -1,5 +1,37 @@
 version: '3.8'
 
 services:
-  spark:
-    image: apache/pyspark:latest
+  spark-master:
+    container_name: da-spark-master
+    build: .
+    entrypoint: ['./entrypoint.sh', 'master']
+    environment:
+      - SPARK_NO_DAEMONIZE=true
+    ports:
+      - '9090:8080'
+      - '7077:7077'
+
+
+  spark-history-server:
+    container_name: da-spark-history
+    build: .
+    entrypoint: ['./entrypoint.sh', 'history']
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_NO_DAEMONIZE=true
+    volumes:
+      - spark-logs:/tmp/spark-events
+    ports:
+      - '18080:18080'
+
+  spark-worker:
+#    container_name: da-spark-worker
+    build: .
+    entrypoint: ['./entrypoint.sh', 'worker']
+    environment:
+      - SPARK_NO_DAEMONIZE=true
+
+
+volumes:
+  spark-logs:

@@ -1,0 +1,15 @@
+- name: Fix it now
+  pattern: "[fF][iI][xX][mM][eE]"
+  filePattern: \*\.py
+- name: No sys.path changes
+  pattern: "sys\\.path\\.append|sys\\.path\\.insert"
+  filePattern: \*\.py
+- name: IPython debug leftover
+  pattern: "IPython\\.embed()"
+  filePattern: \*\.py
+- name: Leftover print
+  pattern: "print\\("
+  filePattern: \*\.py
+- name: Unpinned requirement
+  pattern: "^\\w+\\s"
+  filePattern: \*requirements\.txt
