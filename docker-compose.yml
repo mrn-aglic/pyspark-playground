@@ -5,8 +5,8 @@ services:
     container_name: da-spark-master
     build: .
     entrypoint: ['./entrypoint.sh', 'master']
-    environment:
-      - SPARK_NO_DAEMONIZE=true
+    env_file:
+      - .env.spark
     ports:
       - '9090:8080'
       - '7077:7077'
@@ -18,8 +18,8 @@ services:
     entrypoint: ['./entrypoint.sh', 'history']
     depends_on:
       - spark-master
-    environment:
-      - SPARK_NO_DAEMONIZE=true
+    env_file:
+      - .env.spark
     volumes:
       - spark-logs:/tmp/spark-events
     ports:
@@ -29,8 +29,8 @@ services:
 #    container_name: da-spark-worker
     build: .
     entrypoint: ['./entrypoint.sh', 'worker']
-    environment:
-      - SPARK_NO_DAEMONIZE=true
+    env_file:
+      - .env.spark
 
 
 volumes:
