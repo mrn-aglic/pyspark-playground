@@ -4,6 +4,7 @@ services:
   spark-master:
     container_name: da-spark-master
     build: .
+    image: da-spark-image
     entrypoint: ['./entrypoint.sh', 'master']
     env_file:
       - .env.spark
@@ -14,7 +15,8 @@ services:
 
   spark-history-server:
     container_name: da-spark-history
-    build: .
+#    build: .
+    image: da-spark-image
     entrypoint: ['./entrypoint.sh', 'history']
     depends_on:
       - spark-master
@@ -27,7 +29,8 @@ services:
 
   spark-worker:
 #    container_name: da-spark-worker
-    build: .
+#    build: .
+    image: da-spark-image
     entrypoint: ['./entrypoint.sh', 'worker']
     env_file:
       - .env.spark
