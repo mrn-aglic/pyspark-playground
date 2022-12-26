@@ -17,6 +17,6 @@ results = (
     .count()
 )
 
-results.orderBy(F.col("word").desc()).show(10)
+results.orderBy(F.col("count").desc()).show(10)
 
 results.coalesce(1).write.csv("/opt/spark/data/results/chapter03/simple_count.csv")

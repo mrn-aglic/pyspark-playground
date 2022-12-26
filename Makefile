@@ -1,4 +1,7 @@
 build:
+	docker-compose build
+
+build-nc:
 	docker-compose build --no-cache
 
 build-progress:
@@ -21,4 +24,4 @@ stop:
 
 
 submit:
-	docker exec da-spark-master spark-submit ./apps/$(app)
+	docker exec da-spark-master spark-submit --master spark://spark-master:7077 --deploy-mode client ./apps/$(app)
