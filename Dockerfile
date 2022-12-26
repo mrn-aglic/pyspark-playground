@@ -46,6 +46,9 @@ ENV SPARK_HOME="/opt/spark"
 RUN chmod u+x /opt/spark/sbin/* && \
     chmod u+x /opt/spark/bin/*
 
+ENV PYTHONPATH=$SPARK_HOME/python/:$PYTHONPATH
+ENV PYTHONPATH=$SPARK_HOME/python/lib/py4j-0.10.9.5-src.zip:$PYTHONPATH
+
 COPY entrypoint.sh .
 
 

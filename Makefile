@@ -18,3 +18,7 @@ run-d:
 
 stop:
 	docker-compose stop
+
+
+submit:
+	docker exec da-spark-master spark-submit ./apps/$(app)
