@@ -1,0 +1,89 @@
+FROM python:3.10-bullseye as spark-base
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      sudo \
+      curl \
+      vim \
+      unzip \
+      rsync \
+      openjdk-11-jdk \
+      build-essential \
+      software-properties-common \
+      ssh && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+
+
+## Download spark and hadoop dependencies and install
+
+# Optional env variables
+ENV SPARK_HOME=${SPARK_HOME:-"/opt/spark"}
+ENV HADOOP_HOME=${HADOOP_HOME:-"/opt/hadoop"}
+
+RUN mkdir -p ${HADOOP_HOME} && mkdir -p ${SPARK_HOME}
+WORKDIR ${SPARK_HOME}
+
+
+RUN curl https://dlcdn.apache.org/spark/spark-3.3.1/spark-3.3.1-bin-hadoop3.tgz -o spark-3.3.1-bin-hadoop3.tgz \
+ && tar xvzf spark-3.3.1-bin-hadoop3.tgz --directory /opt/spark --strip-components 1 \
+ && rm -rf spark-3.3.1-bin-hadoop3.tgz
+
+RUN curl https://dlcdn.apache.org/hadoop/common/hadoop-3.3.1/hadoop-3.3.1.tar.gz -o hadoop-3.3.1-bin.tar.gz \
+ && tar xfz hadoop-3.3.1-bin.tar.gz --directory /opt/hadoop --strip-components 1 \
+ && rm -rf hadoop-3.3.1-bin.gz
+
+
+FROM spark-base as pyspark
+
+# Install python deps
+COPY requirements/requirements.txt .
+RUN pip3 install -r requirements.txt
+
+ENV JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
+
+ENV SPARK_HOME="/opt/spark"
+
+ENV PATH="$SPARK_HOME/sbin:/opt/spark/bin:${PATH}"
+ENV PATH="$HADOOP_HOME/bin:$HADOOP_HOME/sbin:${PATH}"
+ENV PATH="${PATH}:${JAVA_HOME}/bin"
+
+ENV SPARK_MASTER="spark://spark-yarn-master:7077"
+ENV SPARK_MASTER_HOST spark-yarn-master
+ENV SPARK_MASTER_PORT 7077
+ENV PYSPARK_PYTHON python3
+ENV HADOOP_CONF_DIR="$HADOOP_HOME/etc/hadoop"
+ENV LD_LIBRARY_PATH="/opt/hadoop/hadoop/lib/native"
+
+ENV HDFS_NAMENODE_USER="root"
+ENV HDFS_DATANODE_USER="root"
+ENV HDFS_SECONDARYNAMENODE_USER="root"
+ENV YARN_RESOURCEMANAGER_USER="root"
+ENV YARN_NODEMANAGER_USER="root"
+
+# Add JAVA_HOME To haddop-env.sh
+RUN echo "export JAVA_HOME=${JAVA_HOME}" >> "$HADOOP_HOME/etc/hadoop/hadoop-env.sh"
+
+# COPY the appropriate configuration files to their appropriate locations
+COPY yarn/spark-defaults.conf "$SPARK_HOME/conf/"
+COPY yarn/*.xml "$HADOOP_HOME/etc/hadoop/"
+
+
+RUN chmod u+x /opt/spark/sbin/* && \
+    chmod u+x /opt/spark/bin/*
+
+ENV PYTHONPATH=$SPARK_HOME/python/:$PYTHONPATH
+ENV PYTHONPATH=$SPARK_HOME/python/lib/py4j-0.10.9.5-src.zip:$PYTHONPATH
+
+RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa && \
+  cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys && \
+  chmod 600 ~/.ssh/authorized_keys
+
+COPY ssh_config ~/.ssh/config
+
+COPY entrypoint-yarn.sh entrypoint.sh
+
+EXPOSE 22
+
+ENTRYPOINT ["./entrypoint.sh"]
