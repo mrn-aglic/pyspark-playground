@@ -48,4 +48,4 @@ submit-yarn-test:
 	docker exec da-spark-yarn-master spark-submit --master yarn --deploy-mode cluster ./examples/src/main/python/pi.py
 
 submit-yarn-cluster:
-	docker exec da-spark-yarn-master spark-submit yarn --deploy-mode cluster ./apps/$(app)
+	docker exec da-spark-yarn-master spark-submit --master yarn --deploy-mode cluster ./apps/$(app)

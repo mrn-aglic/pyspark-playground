@@ -54,7 +54,7 @@ ENV SPARK_MASTER_HOST spark-yarn-master
 ENV SPARK_MASTER_PORT 7077
 ENV PYSPARK_PYTHON python3
 ENV HADOOP_CONF_DIR="$HADOOP_HOME/etc/hadoop"
-ENV LD_LIBRARY_PATH="/opt/hadoop/hadoop/lib/native"
+ENV LD_LIBRARY_PATH="/opt/hadoop/lib/native"
 
 ENV HDFS_NAMENODE_USER="root"
 ENV HDFS_DATANODE_USER="root"

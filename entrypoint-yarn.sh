@@ -19,13 +19,13 @@ then
 
   hdfs dfs -copyFromLocal /opt/spark/data/* /opt/spark/data
   hdfs dfs -ls /opt/spark/data
+
+  start-history-server.sh
+
 elif [ "$SPARK_WORKLOAD" == "worker" ];
 then
   hdfs --daemon start datanode
   yarn --daemon start nodemanager
-#elif [ "$SPARK_WORKLOAD" == "history" ]
-#then
-#  start-history-server.sh
 fi
 
 tail -f /dev/null
