@@ -8,6 +8,29 @@ Therefore, I started with setting up a spark cluster
 using docker. 
 
 ## Running the code
+You can run the spark standalone cluster by running:
+```shell
+make run
+```
+or with 3 workers using:
+```shell
+make run-scaled
+```
+You can submit Python jobs with the command:
+```shell
+make submit app=dir/relative/to/spark_apps/dir
+```
+e.g. 
+```shell
+make submit app=data_analysis_book/chapter03/word_non_null.py
+```
+
+There are a number of commands to build the standalone cluster,
+you should check the Makefile to see them all. But the
+simplest one is:
+```shell
+make build
+```
 
 ## About the book_data directory
 The official repo of the book Data Analysis with Python and
