@@ -2,3 +2,12 @@
 .DS_Store
 book_data/results
 book_data/current
+book_data/broadcast_logs/ReferenceTables
+book_data/broadcast_logs
+book_data/elements
+book_data/gsod_noaa
+book_data/gutenberg_books
+book_data/list_of_numbers
+book_data/recipes
+book_data/window
+book_data/shows
