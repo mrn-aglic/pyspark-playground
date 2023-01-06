@@ -7,7 +7,7 @@ is typically the case in the examples I came across.
 Therefore, I started with setting up a spark cluster 
 using docker. 
 
-## Running the code
+# Running the code (Spark standalone cluster)
 You can run the spark standalone cluster by running:
 ```shell
 make run
@@ -32,7 +32,48 @@ simplest one is:
 make build
 ```
 
-## About the book_data directory
+## Web UIs
+
+# Running the code (Spark on Hadoop Yarn cluster)
+You can run Spark on the Hadoop Yarn cluster by running:
+```shell
+make run-yarn
+```
+or with 3 data nodes:
+```shell
+make run-yarn-scaled
+```
+You can submit an example job to test the setup:
+```shell
+make submit-yarn-test
+```
+which will submit the `pi.py` example in cluster mode.
+
+You can also submit a custom job:
+```shell
+
+```
+
+There are a number of commands to build the cluster,
+you should check the Makefile to see them all. But the
+simplest one is:
+```shell
+make build-yarn
+```
+
+## Web UIs
+You can access different web UIs. The one I found the most 
+useful is:
+```shell
+http://localhost:9870
+```
+
+
+# Stories published on Medium
+1. Setting up a standalone Spark cluster can be found [here](https://medium.com/@MarinAgli1/setting-up-a-spark-standalone-cluster-on-docker-in-layman-terms-8cbdc9fdd14b).
+
+
+# About the book_data directory
 The official repo of the book Data Analysis with Python and
 PySpark can be found here:https://github.com/jonesberg/DataAnalysisWithPythonAndPySpark.
 
