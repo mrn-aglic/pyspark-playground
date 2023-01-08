@@ -31,18 +31,12 @@ then
 elif [ "$SPARK_WORKLOAD" == "history" ];
 then
 
-  hdfs dfs -test -d /spark-logs
-  while [ ! $? != 0 ];
+  while ! hdfs dfs -test -d /spark-logs;
   do
     echo "spark-logs doesn't exist yet... retrying"
     sleep 1;
-    hdfs dfs -test -d /spark-logs
   done
-
-  hdfs dfs -mkdir -p /spark-logs
-
-  # start the MapReduce JobHistory server
-  mapred --daemon start historyserver
+  echo "Exit loop"
 
   # start the spark history server
   start-history-server.sh
