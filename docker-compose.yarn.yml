@@ -8,15 +8,9 @@ services:
       context: .
     image: da-spark-yarn-image
     entrypoint: ['./entrypoint.sh', 'master']
-#    healthcheck:
-#      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
-#      interval: 5s
-#      timeout: 3s
-#      retries: 3
     volumes:
       - ./book_data:/opt/spark/data
       - ./spark_apps:/opt/spark/apps
-#      - spark-yarn-logs:/opt/spark/spark-events
     env_file:
       - .env.spark
     ports:
@@ -24,21 +18,7 @@ services:
       - '9870:9870'
       - '7077:7077'
       - '8088:8088'
-      - '50070:50070'
 
-
-#  spark-history-server:
-#    container_name: da-spark-history
-#    image: da-spark-image
-#    entrypoint: ['./entrypoint.sh', 'history']
-#    depends_on:
-#      - spark-master
-#    env_file:
-#      - .env.spark
-#    volumes:
-#      - spark-logs:/opt/spark/spark-events
-#    ports:
-#      - '18080:18080'
 
   spark-yarn-worker:
 #    container_name: da-spark-worker
@@ -51,7 +31,15 @@ services:
     volumes:
       - ./book_data:/opt/spark/data
       - ./spark_apps:/opt/spark/apps
-#      - spark-yarn-logs:/opt/spark/spark-events
 
-#volumes:
-#  spark-yarn-logs:
+  yarn-history-server:
+    container_name: da-spark-yarn-history
+    image: da-spark-yarn-image
+    entrypoint: ['./entrypoint.sh', 'history']
+    depends_on:
+      - spark-yarn-master
+    env_file:
+      - .env.spark
+    ports:
+      - '18080:18080'
+      - '19888:19888'

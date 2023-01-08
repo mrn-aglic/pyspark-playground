@@ -14,10 +14,10 @@ build-progress:
 	docker-compose build --no-cache --progress=plain
 
 down:
-	docker-compose down --volumes
+	docker-compose down --volumes --remove-orphans
 
 down-yarn:
-	docker-compose -f docker-compose.yarn.yml down --volumes
+	docker-compose -f docker-compose.yarn.yml down --volumes --remove-orphans
 
 run:
 	make down && docker-compose up
