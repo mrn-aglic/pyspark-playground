@@ -33,8 +33,13 @@ make build
 ```
 
 ## Web UIs
+TODO
+
 
 # Running the code (Spark on Hadoop Yarn cluster)
+Before running, check the virtual disk size that Docker
+assigns to the container. In my case, I needed to assign
+some 70 GB.
 You can run Spark on the Hadoop Yarn cluster by running:
 ```shell
 make run-yarn
@@ -51,7 +56,7 @@ which will submit the `pi.py` example in cluster mode.
 
 You can also submit a custom job:
 ```shell
-
+make submit-yarn-cluster app=data_analysis_book/chapter03/word_non_null.py
 ```
 
 There are a number of commands to build the cluster,
@@ -63,15 +68,18 @@ make build-yarn
 
 ## Web UIs
 You can access different web UIs. The one I found the most 
-useful is:
+useful is the NameNode UI:
 ```shell
 http://localhost:9870
 ```
 
+Other UIs:
+- ResourceManger - `localhost:8088`
+- Spark history server - `localhost:18080`
 
 # Stories published on Medium
 1. Setting up a standalone Spark cluster can be found [here](https://medium.com/@MarinAgli1/setting-up-a-spark-standalone-cluster-on-docker-in-layman-terms-8cbdc9fdd14b).
-
+2. 
 
 # About the book_data directory
 The official repo of the book Data Analysis with Python and

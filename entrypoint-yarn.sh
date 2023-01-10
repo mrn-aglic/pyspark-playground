@@ -15,9 +15,15 @@ then
   hdfs --daemon start secondarynamenode
   yarn --daemon start resourcemanager
 
-  # copy the data to the data HDFS directory
-  hdfs dfs -mkdir -p /spark-logs
+  # create required directories
+  while ! hdfs dfs -mkdir -p /spark-logs;
+  do
+    echo "Failed creating /spark-logs hdfs dir"
+  done
+  echo "Created /spark-logs hdfs dir"
   hdfs dfs -mkdir -p /opt/spark/data
+  echo "Created /opt/spark/data hdfs dir"
+
 
   # copy the data to the data HDFS directory
   hdfs dfs -copyFromLocal /opt/spark/data/* /opt/spark/data
