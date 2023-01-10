@@ -32,7 +32,7 @@ run-yarn:
 	make down-yarn && docker-compose -f docker-compose.yarn.yml up
 
 run-yarn-scaled:
-	make down-yarn && docker-compose -f docker-compose.yarn.yml up --scale spark-yarn-worker=3
+	make down-yarn && docker-compose -f docker-compose.yarn.yml up --scale spark-yarn-worker=$(n)
 
 stop:
 	docker-compose stop
@@ -55,3 +55,25 @@ submit-yarn-cluster:
 
 rm-results:
 	rm -r book_data/results/*
+
+
+# Yarn cluster auto-generated docker-compose
+run-ag:
+	make down-ag && sh ./generate-docker-compose.sh $(n) && docker compose -f docker-compose.generated.yml up
+
+down-ag:
+	docker compose -f docker-compose.generated.yml down
+
+
+# Scripts to handle /etc/hosts
+#args=`n="$(filter-out $@,$(MAKECMDGOALS))" && echo $${n:-${1}}`
+n=3
+
+dns-modify-h:
+	sh ./dns_scripts/add_docker_hosts.sh -h || true
+
+dns-modify:
+	sh ./dns_scripts/add_docker_hosts.sh -o $(o) -n $(n)
+
+dns-restore:
+	sh ./dns_scripts/restore_hosts_from_backup.sh
