@@ -31,6 +31,8 @@ then
 
 elif [ "$SPARK_WORKLOAD" == "worker" ];
 then
+  hdfs namenode -format
+
   # start the worker node processes
   hdfs --daemon start datanode
   yarn --daemon start nodemanager

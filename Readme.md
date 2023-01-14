@@ -77,9 +77,39 @@ Other UIs:
 - ResourceManger - `localhost:8088`
 - Spark history server - `localhost:18080`
 
+# About the branch expose-docker-hostnames-to-host
+The branch expose-docker-hostnames-to-host contains the 
+shell scripts, templates, and Makefile modifications 
+required to expose worker node web interfaces. To run 
+the cluster you need to do the following. 
+1. run
+```shell
+make run-ag n=3
+```
+which will generate a docker compose file with 3 worker
+nodes and the appropriate yarn and hdfs site files
+in the yarn-generated folder.
+2. register the docker hostnames with /etc/hosts
+```shell
+sudo make dns-modify o=true
+```
+which will create a backup folder with your original
+hosts file.
+
+Once you are done and terminate the cluster, restore 
+your original hosts file with:
+```shell
+sudo make dns-restore
+```
+
+For more information read the story I published on Medium
+[here](https://medium.com/@MarinAgli1/using-hostnames-to-access-hadoop-resources-running-on-docker-5860cd7aeec1).
+
+
 # Stories published on Medium
 1. Setting up a standalone Spark cluster can be found [here](https://medium.com/@MarinAgli1/setting-up-a-spark-standalone-cluster-on-docker-in-layman-terms-8cbdc9fdd14b).
-2. 
+2. Setting up Hadoop Yarn to run Spark applications can be found [here](https://medium.com/@MarinAgli1/setting-up-hadoop-yarn-to-run-spark-applications-6ea1158287af).
+3. Using hostnames to access Hadoop resources can be found [here](https://medium.com/@MarinAgli1/using-hostnames-to-access-hadoop-resources-running-on-docker-5860cd7aeec1).
 
 # About the book_data directory
 The official repo of the book Data Analysis with Python and

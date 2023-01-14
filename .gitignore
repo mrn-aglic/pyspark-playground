@@ -11,3 +11,6 @@ book_data/list_of_numbers
 book_data/recipes
 book_data/window
 book_data/shows
+/backup/
+/docker-compose.generated.yml
+/yarn-generated/
