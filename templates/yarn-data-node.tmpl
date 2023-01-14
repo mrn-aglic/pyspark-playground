@@ -11,6 +11,7 @@
       - ./book_data:/opt/spark/data
       - ./spark_apps:/opt/spark/apps
       - ./yarn-generated/{hdfs-site-file}:/opt/hadoop/etc/hadoop/hdfs-site.xml
+      - ./yarn-generated/{yarn-site-file}:/opt/hadoop/etc/hadoop/yarn-site.xml
     ports:
-      - "{port1}:8042"
+      - "{port1}:{port1}"
       - "{port2}:{port2}"
