@@ -44,6 +44,9 @@ stop-yarn:
 submit:
 	docker exec da-spark-master spark-submit --master spark://spark-master:7077 --deploy-mode client ./apps/$(app)
 
+submit-da-book:
+	make submit app=data_analysis_book/$(app)
+
 submit-yarn-test:
 	docker exec da-spark-yarn-master spark-submit --master yarn --deploy-mode cluster ./examples/src/main/python/pi.py
 
