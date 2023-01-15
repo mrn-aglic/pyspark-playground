@@ -52,3 +52,6 @@ submit-yarn-test:
 
 submit-yarn-cluster:
 	docker exec da-spark-yarn-master spark-submit --master yarn --deploy-mode cluster ./apps/$(app)
+
+rm-results:
+	rm -r book_data/results/*

@@ -19,13 +19,15 @@ def get_distinct_words(filename):
         .distinct()
     )
 
-    return spark.createDataFrame([
-        results.count()
-    ], IntegerType()).toDF("distinct words")
+    return spark.createDataFrame([results.count()], IntegerType()).toDF(
+        "distinct words"
+    )
 
 
 result = get_distinct_words("/opt/spark/data/gutenberg_books/*.txt")
 
 result.show()
 
-result.coalesce(1).write.mode("overwrite").csv("/opt/spark/data/results/chapter03/simple_count.csv")
+result.coalesce(1).write.mode("overwrite").csv(
+    "/opt/spark/data/results/chapter03/simple_count.csv"
+)
