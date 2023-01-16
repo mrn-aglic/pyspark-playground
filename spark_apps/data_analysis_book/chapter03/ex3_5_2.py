@@ -1,6 +1,5 @@
 import pyspark.sql.functions as F
 from pyspark.sql import SparkSession
-from pyspark.sql.types import IntegerType
 
 spark = SparkSession.builder.appName(
     "Analyzing the vocabulary of Pride and Prejudice. Exercise 3.4"
