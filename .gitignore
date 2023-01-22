@@ -14,3 +14,4 @@ book_data/shows
 /backup/
 /docker-compose.generated.yml
 /yarn-generated/
+/book_data/backblaze_data/
