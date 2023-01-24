@@ -24,9 +24,12 @@ df.printSchema()
 
 # ex 6.3
 # missing field definition
+# A StructType() will take a list of StructField(), not the types directly.
+# We need to wrap T.StringType(), T.LongType(), and T.LongType() into a StructField(), giv- ing them an appropriate name.
 
 # ex 6.4
-# Probably will need to escape those characters which will make it more difficult to read what we are trying to do
+# If we have a struct with a field that corresponds to that column name. The column will become unreachable.
+# E.g. info.status -> column, info -> struct with field status
 
 # ex 6.5
 dict_schema = T.StructType(

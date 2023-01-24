@@ -13,6 +13,15 @@ assert three_shows.count() == 3
 
 three_shows.printSchema()
 
+# From book solution:
+# sol6_6 = three_shows.select(
+#     "name",
+#     F.array_min("_embedded.episodes.airdate").cast("date").alias("first"),
+#     F.array_max("_embedded.episodes.airdate").cast("date").alias("last"), ).select("name", (
+#             F.col("last") - F.col("first")).alias("tenure"))
+#
+# sol6_6.show(truncate=50)
+
 data = three_shows.select(
     "id",
     "name",

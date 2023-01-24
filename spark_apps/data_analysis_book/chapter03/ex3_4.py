@@ -9,7 +9,7 @@ spark = SparkSession.builder.appName(
 def get_distinct_words(filename):
     book = spark.read.text(filename)
 
-    results = (
+    return (
         book.select(F.split(F.col("value"), " ").alias("line"))
         .select(F.explode(F.col("line")).alias("word"))
         .select(F.lower(F.col("word")).alias("word_lower"))
@@ -17,11 +17,9 @@ def get_distinct_words(filename):
         .where(F.col("word") != "")
         .groupby(F.col("word"))
         .count()
+        .where(F.col("count") == 1)
+        .limit(5)
     )
-
-    results = results.filter(F.col("count") == 1).limit(5)
-
-    return results
 
 
 result = get_distinct_words("/opt/spark/data/pride-and-prejudice.txt")

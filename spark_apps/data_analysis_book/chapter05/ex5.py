@@ -28,3 +28,8 @@ left.join(right, how="left_anti", on="Item").select("Item").distinct().show()
 left.alias("left").join(
     right.alias("right"), how="left", on=[right["Item"] == left["Item"]]
 ).where(F.col("right.Item").isNull()).select(F.col("left.Item")).distinct().show()
+
+# official solution
+left.join(right, how="left", on=left["Item"] == right["Item"]).where(
+    right["Item"].isnull()
+).select(left["Item"])

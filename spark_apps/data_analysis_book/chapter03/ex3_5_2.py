@@ -18,8 +18,6 @@ def get_distinct_words(filename):
         .count()
     )
 
-    # results = results.orderBy(F.col("count").desc())
-
     return results
 
 

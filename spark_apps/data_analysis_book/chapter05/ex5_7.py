@@ -122,7 +122,7 @@ answer = (
 answer_filled = answer.fillna(0)
 
 answer_filled.groupby(F.round("commercial_ratio", 1).alias("commercial_ratio")).agg(
-    F.count(F.round("commercial_ratio", 1)).alias("number_of_channels")
+    F.count("*").alias("number_of_channels")
 ).orderBy("commercial_ratio", ascending=False).show(1000, False)
 
 # answer_filled.orderBy("commercial_ratio", ascending=False).show(1000, False)
