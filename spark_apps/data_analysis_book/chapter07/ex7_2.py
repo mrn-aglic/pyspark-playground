@@ -46,28 +46,14 @@ full_data = full_data.selectExpr(
 #     F.col("failure")
 # )
 
-drive_days = full_data.groupby("model", "capacity_GB").agg(
-    F.count("*").alias("drive_days")
-)
-
-failures = (
-    full_data.where("failure = 1")
-    .groupby("model", "capacity_GB")
-    .agg(F.count("*").alias("failures"))
-)
-
-# Alternative
-# failures = (
-#     full_data.where("failure = 1")
-#     .groupby("model", "capacity_GB")
-#     .agg(F.expr("count(*) failures"))
-# )
-
-failures.show(5)
 
 summarized_data = (
-    drive_days.join(failures, on=["model", "capacity_GB"], how="left")
-    .fillna(0.0, "failures")
+    full_data.groupBy("model", "capacity_GB")
+    .agg(
+        F.count("*").alias("drive_days"),
+        F.sum(F.col("failure")).alias("failures"),
+    )
     .selectExpr("model", "capacity_GB", "(failures / drive_days) AS failure_rate")
-    .cache()
 )
+
+summarized_data.show(5)

@@ -7,6 +7,8 @@ spark = SparkSession.builder.appName(
     "Backblaze data - Blending SQL and Python"
 ).getOrCreate()
 
+# spark.sparkContext.setLogLevel("WARN")
+
 data_dir = "/opt/spark/data/backblaze_data"
 
 DATA_FILES = ["data_Q3_2019"]
@@ -63,7 +65,7 @@ failures = (
 #     .agg(F.expr("count(*) failures"))
 # )
 
-failures.show(5)
+# failures.show(5)
 
 summarized_data = (
     drive_days.join(failures, on=["model", "capacity_GB"], how="left")
@@ -72,9 +74,12 @@ summarized_data = (
     .cache()
 )
 
+# pprint("Summarized data:")
+# summarized_data.show(5)
+
 
 def most_reliable_drive_for_capacity(data, capacity_GB=2048.0, precision=0.25, top_n=3):
-    """Returns the top 3 drive for a given approximate capacity.
+    """Return the top 3 drive for a given approximate capacity.
 
     Given a capacity in GB and a precision as a decimal number, we keep the N
     drives where:
@@ -82,7 +87,6 @@ def most_reliable_drive_for_capacity(data, capacity_GB=2048.0, precision=0.25, t
     - the failure rate is the lowest
 
     """
-
     capacity_min = capacity_GB / (1 + precision)
     capacity_max = capacity_GB * (1 + precision)
 
