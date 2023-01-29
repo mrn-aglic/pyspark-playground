@@ -1,5 +1,6 @@
 from functools import reduce
 
+import pyspark.sql.functions as F
 from pyspark.sql import SparkSession
 
 spark = SparkSession.builder.appName(
@@ -35,5 +36,23 @@ full_data = reduce(
 # When looking at the reliability of each drive model,
 # we can use drive days as a unit and count the failures versus drive days.
 
+capacity_count = full_data.groupby("model", "capacity_bytes").agg(
+    F.count("*").alias("capacity_occurrence")
+)
 
-full_data.orderBy("avg_age", ascending=False).show(20)
+most_common_capacity = capacity_count.groupby("model").agg(
+    F.max("capacity_occurrence").alias("most_common_capacity_occurrence")
+)
+
+sol = most_common_capacity.join(
+    capacity_count,
+    on=(
+        capacity_count["model"]
+        == most_common_capacity["model"] & capacity_count["capacity_occurrence"]
+        == most_common_capacity["most_common_capacity_occurrence"]
+    ),
+).select(most_common_capacity["model"], "capacity_bytes")
+
+sol.show(5)
+
+full_data = full_data.drop("capacity_bytes").join(sol, on="model")
