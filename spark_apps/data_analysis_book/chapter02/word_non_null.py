@@ -2,7 +2,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, explode, lower, regexp_extract, split
 
 spark = SparkSession.builder.appName(
-    "Analyzing the vocabulary of Pride and Prejudice."
+    "Ch02 - Analyzing the vocabulary of Pride and Prejudice."
 ).getOrCreate()
 
 book = spark.read.text("/opt/spark/data/pride-and-prejudice.txt")

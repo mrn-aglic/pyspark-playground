@@ -3,7 +3,7 @@ import os
 import pyspark.sql.functions as F
 from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.appName("Broadcast logs script ch05").getOrCreate()
+spark = SparkSession.builder.appName("Broadcast logs script ch05 (ex5_5)").getOrCreate()
 
 spark.sparkContext.setLogLevel("WARN")
 

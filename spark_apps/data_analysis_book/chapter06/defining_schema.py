@@ -3,7 +3,7 @@ import pyspark.sql.types as T
 from py4j.protocol import Py4JJavaError
 from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.getOrCreate()
+spark = SparkSession.builder.appName("Ch06 - defining schema").getOrCreate()
 
 data_dir = "/opt/spark/data"
 

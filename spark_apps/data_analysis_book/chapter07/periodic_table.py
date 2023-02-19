@@ -1,7 +1,7 @@
 import pyspark.sql.functions as F
 from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.appName("Perdiodic table - PySpark vs SQL").getOrCreate()
+spark = SparkSession.builder.appName("Ch07 - Perdiodic table - PySpark vs SQL").getOrCreate()
 
 data_dir = "/opt/spark/data"
 

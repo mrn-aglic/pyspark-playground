@@ -5,7 +5,7 @@ import pyspark.sql.functions as F
 import pyspark.sql.types as T
 from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.getOrCreate()
+spark = SparkSession.builder.appName("Ch06 - defining schema json").getOrCreate()
 
 data_dir = "/opt/spark/data"
 

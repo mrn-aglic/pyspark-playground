@@ -4,7 +4,7 @@ import pyspark.sql.functions as F
 from pyspark.sql import SparkSession
 
 spark = SparkSession.builder.appName(
-    "Backblaze data - Blending SQL and Python"
+    "Ex7_3"
 ).getOrCreate()
 
 data_dir = "/opt/spark/data/backblaze_data"

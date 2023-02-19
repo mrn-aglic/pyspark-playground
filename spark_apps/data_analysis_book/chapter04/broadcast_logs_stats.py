@@ -2,7 +2,7 @@ import os
 
 from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.appName("Broadcast logs stats").getOrCreate()
+spark = SparkSession.builder.appName("Ch04 - Broadcast logs stats").getOrCreate()
 
 DIRECTORY = "/opt/spark/data/broadcast_logs"
 

@@ -4,7 +4,7 @@ import pyspark.sql.functions as F
 from pyspark.sql import SparkSession
 
 spark = SparkSession.builder.appName(
-    "Backblaze data - Blending SQL and Python"
+    "Ch07 - Backblaze data - Blending SQL and Python"
 ).getOrCreate()
 
 # spark.sparkContext.setLogLevel("WARN")

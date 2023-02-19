@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.appName("Tabular data example").getOrCreate()
+spark = SparkSession.builder.appName("Ch04 - Tabular data example").getOrCreate()
 
 my_grocery_list = [
     ["Banana", 2, 1.74],

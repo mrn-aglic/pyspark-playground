@@ -1,7 +1,7 @@
 import pyspark.sql.types as T
 from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.getOrCreate()
+spark = SparkSession.builder.appName("Ex6").getOrCreate()
 sc = spark.sparkContext
 
 # ex 6.1

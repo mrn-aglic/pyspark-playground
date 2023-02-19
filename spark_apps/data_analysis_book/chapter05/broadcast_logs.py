@@ -3,7 +3,7 @@ import os
 import pyspark.sql.functions as F
 from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.appName("Broadcast logs script ch05").getOrCreate()
+spark = SparkSession.builder.appName("Ch05 - Broadcast logs script ch05").getOrCreate()
 
 DIRECTORY = "/opt/spark/data/broadcast_logs"
 

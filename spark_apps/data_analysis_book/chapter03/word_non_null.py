@@ -2,7 +2,7 @@ import pyspark.sql.functions as F
 from pyspark.sql import SparkSession
 
 spark = SparkSession.builder.appName(
-    "Analyzing the vocabulary of Pride and Prejudice."
+    "Ch03 - Analyzing the vocabulary of Pride and Prejudice."
 ).getOrCreate()
 
 book = spark.read.text("/opt/spark/data/pride-and-prejudice.txt")

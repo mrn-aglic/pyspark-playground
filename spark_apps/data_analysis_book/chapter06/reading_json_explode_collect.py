@@ -3,7 +3,7 @@ from pprint import pprint
 import pyspark.sql.functions as F
 from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.getOrCreate()
+spark = SparkSession.builder.appName("Ch06 - reading json explode collection").getOrCreate()
 
 data_dir = "/opt/spark/data"
 

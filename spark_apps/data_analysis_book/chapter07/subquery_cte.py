@@ -2,7 +2,7 @@ import pyspark.sql.functions as F
 import pyspark.sql.types as T
 from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.appName("Backblaze data - subquery and cte").getOrCreate()
+spark = SparkSession.builder.appName("Ch07 - Backblaze data - subquery and cte").getOrCreate()
 
 data_dir = "/opt/spark/data"
 

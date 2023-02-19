@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.getOrCreate()
+spark = SparkSession.builder.appName("Ex6_7").getOrCreate()
 
 data_dir = "/opt/spark/data"
 

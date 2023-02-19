@@ -9,7 +9,7 @@
 import pyspark.sql.functions as F
 from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.appName("ex5.4").getOrCreate()
+spark = SparkSession.builder.appName("ex5_4").getOrCreate()
 
 left = [
     ["Banana", 2, 1.74],

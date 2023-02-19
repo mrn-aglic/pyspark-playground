@@ -1,7 +1,7 @@
 import pyspark.sql.functions as F
 from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.getOrCreate()
+spark = SparkSession.builder.appName("Ch06 - reading json struct").getOrCreate()
 
 data_dir = "/opt/spark/data"
 

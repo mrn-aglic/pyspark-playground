@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.utils import AnalysisException
 
-spark = SparkSession.builder.appName("Perdiodic table - SQL querying").getOrCreate()
+spark = SparkSession.builder.appName("Ch07 - Perdiodic table - SQL querying").getOrCreate()
 
 data_dir = "/opt/spark/data"
 

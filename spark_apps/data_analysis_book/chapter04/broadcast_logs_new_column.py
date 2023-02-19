@@ -3,7 +3,7 @@ import os
 import pyspark.sql.functions as F
 from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.appName("Broadcast logs with new columns").getOrCreate()
+spark = SparkSession.builder.appName("Ch04 - Broadcast logs with new columns").getOrCreate()
 
 DIRECTORY = "/opt/spark/data/broadcast_logs"
 

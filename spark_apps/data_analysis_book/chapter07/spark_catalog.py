@@ -4,7 +4,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.utils import AnalysisException
 
 # The spark catalog is a way for Spark to manage its SQL namespace
-spark = SparkSession.builder.appName("Perdiodic table - spark catalog").getOrCreate()
+spark = SparkSession.builder.appName("Ch07 - Perdiodic table - spark catalog").getOrCreate()
 
 data_dir = "/opt/spark/data"
 

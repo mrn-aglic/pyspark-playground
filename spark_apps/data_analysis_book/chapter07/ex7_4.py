@@ -3,7 +3,7 @@ from functools import reduce
 from pyspark.sql import SparkSession
 
 spark = SparkSession.builder.appName(
-    "Backblaze data - Blending SQL and Python"
+    "Ex7_4"
 ).getOrCreate()
 
 data_dir = "/opt/spark/data/backblaze_data"
