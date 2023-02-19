@@ -33,7 +33,10 @@ make build
 ```
 
 ## Web UIs
-TODO
+The master node can be accessed on:
+`localhost:9090`. 
+The spark history server is accessible through:
+`localhost:18080`.
 
 
 # Running the code (Spark on Hadoop Yarn cluster)
