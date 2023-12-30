@@ -4,9 +4,10 @@ FROM ubuntu:22.04 as spark-base
 # Disable interactive installation
 ARG DEBIAN_FRONTEND=noninteractive
 
-ARG SPARK_VERSION=3.3.4
-ARG HADOOP_VERSION=3.3.5
+ARG SPARK_VERSION=3.2.0
+ARG HADOOP_VERSION=3.2.4
 ARG ZEPPELIN_VERSION=0.10.1
+
 
 # Install tools required by the OS
 RUN apt-get update && \
@@ -32,6 +33,11 @@ RUN apt-get update && \
       openjdk-8-jdk \
     && apt-get clean 
     # && rm -rf /var/lib/apt/lists/*
+    
+
+ARG SPARK_VERSION=3.2.0
+ARG HADOOP_VERSION=3.2.4
+ARG ZEPPELIN_VERSION=0.10.1
 
 # Setup the directories for Spark, Hadoop, Zeppelin installations
 ENV SPARK_HOME=/opt/spark
@@ -45,15 +51,18 @@ RUN mkdir -p $HADOOP_HOME \
 WORKDIR $SPARK_HOME
 
 # Download and install Spark
-RUN curl -L https://dlcdn.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop3.tgz -o spark-${SPARK_VERSION}-bin-hadoop3.tgz \
- && tar xvzf spark-${SPARK_VERSION}-bin-hadoop3.tgz --directory ${SPARK_HOME} --strip-components 1 \
- && rm -rf spark-${SPARK_VERSION}-bin-hadoop3.tgz
+RUN curl -L https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop3.2.tgz -o spark-${SPARK_VERSION}-bin-hadoop3.2.tgz \
+ && tar xvzf spark-${SPARK_VERSION}-bin-hadoop3.2.tgz --directory ${SPARK_HOME} --strip-components 1 \
+ && rm -rf spark-${SPARK_VERSION}-bin-hadoop3.2.tgz
+
 
 # Download and install Hadoop
-RUN curl -L https://dlcdn.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz -o hadoop-${HADOOP_VERSION}-bin.tar.gz \
+RUN curl -L https://archive.apache.org/dist/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz -o hadoop-${HADOOP_VERSION}-bin.tar.gz \
  && tar xfz hadoop-${HADOOP_VERSION}-bin.tar.gz --directory ${HADOOP_HOME} --strip-components 1 \
  && rm -rf hadoop-${HADOOP_VERSION}-bin.tar.gz
 
+
+# Download and install apache Zeppelin
 RUN curl -L https://dlcdn.apache.org/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz -o zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz \
  && tar xfz zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz --directory ${ZEPPELIN_HOME} --strip-components 1 \
  && rm -rf zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz
