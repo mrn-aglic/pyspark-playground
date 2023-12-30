@@ -6,7 +6,7 @@ services:
     build:
       dockerfile: Dockerfile-yarn-ubuntu
       context: .
-    image: da-spark-yarn-image
+    image: da-spark-yarn-image-ubuntu
     entrypoint: ['./entrypoint.sh', 'master']
     volumes:
       - ./book_data:/opt/spark/data

@@ -20,8 +20,6 @@ RUN apt-get update && \
       software-properties-common \
       dos2unix \
       nano \
-      telnet \
-      ssh \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -34,12 +32,12 @@ WORKDIR $SPARK_HOME
 
 # Download and install Spark
 RUN curl -L https://dlcdn.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop3.tgz -o spark-${SPARK_VERSION}-bin-hadoop3.tgz \
- && tar xvzf spark-${SPARK_VERSION}-bin-hadoop3.tgz --directory /opt/spark --strip-components 1 \
+ && tar xvzf spark-${SPARK_VERSION}-bin-hadoop3.tgz --directory ${SPARK_HOME} --strip-components 1 \
  && rm -rf spark-${SPARK_VERSION}-bin-hadoop3.tgz
 
 # Download and install Hadoop
 RUN curl -L https://dlcdn.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz -o hadoop-${HADOOP_VERSION}-bin.tar.gz \
- && tar xfz hadoop-${HADOOP_VERSION}-bin.tar.gz --directory /opt/hadoop --strip-components 1 \
+ && tar xfz hadoop-${HADOOP_VERSION}-bin.tar.gz --directory ${HADOOP_HOME} --strip-components 1 \
  && rm -rf hadoop-${HADOOP_VERSION}-bin.tar.gz
 
 # Create a new stage for the pyspark image
@@ -76,6 +74,8 @@ RUN chmod u+x $SPARK_HOME/sbin/* && \
 
 ENV PYTHONPATH=$SPARK_HOME/python/:$PYTHONPATH
 
+RUN apt-get update && apt-get install -y openssh-client && rm -rf /var/lib/apt/lists/*
+
 # Generate SSH keys and configure
 RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa && \
     cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys && \
@@ -91,7 +91,8 @@ RUN dos2unix entrypoint.sh && chmod +x entrypoint.sh
 EXPOSE 22
 
 # Set entry point
-ENTRYPOINT ["./entrypoint.sh"]
+# ENTRYPOINT ["./entrypoint.sh"]
+CMD ["./entrypoint.sh"]
 
-# docker-compose -f  docker-compose-ubuntu.yarn.yml build 
-# docker run --rm -it da-spark-yarn-image /bin/bash
+# docker compose -f docker-compose-ubuntu.yarn.yml build 
+# docker run --rm -it da-spark-yarn-image-ubuntu /bin/bash

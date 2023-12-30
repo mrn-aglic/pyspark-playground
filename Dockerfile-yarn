@@ -90,5 +90,9 @@ EXPOSE 22
 # Set entry point
 ENTRYPOINT ["./entrypoint.sh"]
 
+# if running for testing using this
+# CMD ["./entrypoint.sh"]
+
+
 # docker-compose -f docker-compose.yarn.yml build
 # docker run --rm -it da-spark-yarn-image /bin/bash
