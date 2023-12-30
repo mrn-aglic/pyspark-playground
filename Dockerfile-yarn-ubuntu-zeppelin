@@ -6,29 +6,42 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 ARG SPARK_VERSION=3.3.4
 ARG HADOOP_VERSION=3.3.5
+ARG ZEPPELIN_VERSION=0.10.1
 
 # Install tools required by the OS
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+      software-properties-common \
       sudo \
       curl \
       vim \
       unzip \
       rsync \
-      openjdk-8-jdk \
       build-essential \
-      software-properties-common \
       dos2unix \
       nano \
-      wget \
-  && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+      python3 \
+    python3-pip \
+    openssh-client \
+    && apt-get clean 
+    
+# Print a message during the build process
+RUN echo "INSTALING JAVA version 1.8!"
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      openjdk-8-jdk \
+    && apt-get clean 
+    # && rm -rf /var/lib/apt/lists/*
 
-# Setup the directories for Spark and Hadoop installations
+# Setup the directories for Spark, Hadoop, Zeppelin installations
 ENV SPARK_HOME=/opt/spark
 ENV HADOOP_HOME=/opt/hadoop
+ENV ZEPPELIN_HOME=/opt/zeppelin
 
-RUN mkdir -p $HADOOP_HOME && mkdir -p $SPARK_HOME
+RUN mkdir -p $HADOOP_HOME \
+    && mkdir -p $SPARK_HOME \
+    && mkdir -p $ZEPPELIN_HOME 
+
 WORKDIR $SPARK_HOME
 
 # Download and install Spark
@@ -41,17 +54,20 @@ RUN curl -L https://dlcdn.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/hado
  && tar xfz hadoop-${HADOOP_VERSION}-bin.tar.gz --directory ${HADOOP_HOME} --strip-components 1 \
  && rm -rf hadoop-${HADOOP_VERSION}-bin.tar.gz
 
+RUN curl -L https://dlcdn.apache.org/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz -o zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz \
+ && tar xfz zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz --directory ${ZEPPELIN_HOME} --strip-components 1 \
+ && rm -rf zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz
+
 # Create a new stage for the pyspark image
 FROM spark-base as pyspark
 
 # Install Python dependencies
 COPY requirements/requirements.txt .
-RUN apt-get update && apt-get install -y python3-pip \
- && pip3 install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 # Set environment variables
 ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
-ENV PATH="$SPARK_HOME/sbin:/opt/spark/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:${PATH}"
+ENV PATH="$ZEPPELIN_HOME/bin:$SPARK_HOME/sbin:/opt/spark/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:${PATH}"
 ENV HADOOP_CONF_DIR="$HADOOP_HOME/etc/hadoop"
 ENV LD_LIBRARY_PATH="$HADOOP_HOME/lib/native:${LD_LIBRARY_PATH}"
 
@@ -68,14 +84,18 @@ RUN echo "export JAVA_HOME=${JAVA_HOME}" >> "$HADOOP_HOME/etc/hadoop/hadoop-env.
 # Copy configuration files
 COPY yarn/spark-defaults.conf $SPARK_HOME/conf/
 COPY yarn/*.xml $HADOOP_HOME/etc/hadoop/
+COPY zeppelin/conf/* $ZEPPELIN_HOME/conf/
 
 # Make binaries and scripts executable, set PYTHONPATH
 RUN chmod u+x $SPARK_HOME/sbin/* && \
-    chmod u+x $SPARK_HOME/bin/*
+    chmod u+x $SPARK_HOME/bin/* && \
+    chmod u+x $ZEPPELIN_HOME/bin/*
 
 ENV PYTHONPATH=$SPARK_HOME/python/:$PYTHONPATH
 
-RUN apt-get update && apt-get install -y openssh-client && rm -rf /var/lib/apt/lists/*
+# Config Zeppelin 
+# RUN cp $ZEPPELIN_HOME/conf/zeppelin-env.sh.template $ZEPPELIN_HOME/conf/zeppelin-env.sh \
+#     && cp $ZEPPELIN_HOME/conf/zeppelin-site.xml.template $ZEPPELIN_HOME/conf/zeppelin-site.xml
 
 # Generate SSH keys and configure
 RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa && \
@@ -85,7 +105,7 @@ RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa && \
 COPY ssh_config ~/.ssh/config
 
 # Copy entrypoint script
-COPY entrypoint-yarn.sh entrypoint.sh
+COPY entrypoint-yarn-zeppelin.sh entrypoint.sh
 
 RUN dos2unix entrypoint.sh && chmod +x entrypoint.sh
 
@@ -95,5 +115,5 @@ EXPOSE 22
 # ENTRYPOINT ["./entrypoint.sh"]
 CMD ["./entrypoint.sh"]
 
-# docker compose -f docker-compose-ubuntu.yarn.yml build 
-# docker run --rm -it da-spark-yarn-image-ubuntu /bin/bash
+# docker compose -f docker-compose-ubuntu-zeppelin.yarn.yml build 
+# docker run --rm -it da-spark-yarn-image-ubuntu-zeppelin /bin/bash
