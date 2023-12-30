@@ -1,7 +1,7 @@
 # Use the official Python image as the base image
 FROM ubuntu:22.04 as spark-base
 
-# Disable interactive instalation
+# Disable interactive installation
 ARG DEBIAN_FRONTEND=noninteractive
 
 ARG SPARK_VERSION=3.3.4
@@ -20,10 +20,10 @@ RUN apt-get update && \
       software-properties-common \
       dos2unix \
       nano \
-      telnet \ 
-  ssh && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+      telnet \
+      ssh \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Setup the directories for Spark and Hadoop installations
 ENV SPARK_HOME=/opt/spark
@@ -33,12 +33,12 @@ RUN mkdir -p $HADOOP_HOME && mkdir -p $SPARK_HOME
 WORKDIR $SPARK_HOME
 
 # Download and install Spark
-RUN curl https://dlcdn.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop3.tgz -o spark-${SPARK_VERSION}-bin-hadoop3.tgz \
+RUN curl -L https://dlcdn.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop3.tgz -o spark-${SPARK_VERSION}-bin-hadoop3.tgz \
  && tar xvzf spark-${SPARK_VERSION}-bin-hadoop3.tgz --directory /opt/spark --strip-components 1 \
  && rm -rf spark-${SPARK_VERSION}-bin-hadoop3.tgz
 
 # Download and install Hadoop
-RUN curl https://dlcdn.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz -o hadoop-${HADOOP_VERSION}-bin.tar.gz \
+RUN curl -L https://dlcdn.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz -o hadoop-${HADOOP_VERSION}-bin.tar.gz \
  && tar xfz hadoop-${HADOOP_VERSION}-bin.tar.gz --directory /opt/hadoop --strip-components 1 \
  && rm -rf hadoop-${HADOOP_VERSION}-bin.tar.gz
 
@@ -47,7 +47,8 @@ FROM spark-base as pyspark
 
 # Install Python dependencies
 COPY requirements/requirements.txt .
-RUN pip3 install -r requirements.txt
+RUN apt-get update && apt-get install -y python3-pip \
+ && pip3 install -r requirements.txt
 
 # Set environment variables
 ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
@@ -92,5 +93,5 @@ EXPOSE 22
 # Set entry point
 ENTRYPOINT ["./entrypoint.sh"]
 
-# docker-compose -f docker-compose.yarn.yml build
+# docker-compose -f  docker-compose-ubuntu.yarn.yml build 
 # docker run --rm -it da-spark-yarn-image /bin/bash
