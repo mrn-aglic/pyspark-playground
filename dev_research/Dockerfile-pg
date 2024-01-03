@@ -1,0 +1,89 @@
+FROM ubuntu:22.04 as linux-base
+
+# Disable interactive installation
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      software-properties-common \
+      sudo \
+      curl \
+      vim \
+      unzip \
+      rsync \
+      build-essential \
+      dos2unix \
+      nano \
+      python3 \
+    python3-pip \
+    openssh-client \
+    && apt-get clean 
+
+# installing postgres 
+RUN echo "INSTALING POSTGRESQL"
+
+RUN curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc|sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
+
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
+
+# RUN cat /etc/apt/sources.list.d/pgdg.list
+
+#  Install ``python-software-properties``, ``software-properties-common`` and PostgreSQL 11
+#  There are some warnings (in red) that show up during the build. You can hide
+#  them by prefixing each apt-get statement with DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update \ 
+    &&  apt-get install -y --no-install-recommends  postgresql-11 postgresql-client-11 postgresql-contrib-11
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      dos2unix \
+    && apt-get clean 
+
+
+# Copy entrypoint script
+COPY entrypoint.sh entrypoint.sh
+
+RUN dos2unix entrypoint.sh && chmod +x entrypoint.sh
+
+USER postgres 
+
+# Create user and database for hive_metastore
+RUN /etc/init.d/postgresql start && \
+    psql --command "CREATE USER hive WITH SUPERUSER PASSWORD 'hive';" && \
+    createdb -O admin revamp && \
+    /etc/init.d/postgresql stop
+
+# Adjust PostgreSQL configuration so that remote connections to the
+# database are possible.
+RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/11/main/pg_hba.conf
+
+# And add ``listen_addresses`` to ``/etc/postgresql/11/main/postgresql.conf``
+RUN echo "listen_addresses='*'" >> /etc/postgresql/11/main/postgresql.conf
+
+
+# Add VOLUMEs to allow backup of config, logs and databases
+VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
+
+# Expose the PostgreSQL port
+EXPOSE 5432
+
+EXPOSE 22
+
+# Set the default command to run when starting the container
+# CMD service postgresql start && \
+#     /usr/lib/postgresql/11/bin/postgres -D /var/lib/postgresql/11/main -c config_file=/etc/postgresql/11/main/postgresql.conf
+
+# CMD /bin/bash -c "sleep 10 && service postgresql start && /usr/lib/postgresql/11/bin/postgres -D /var/lib/postgresql/11/main -c config_file=/etc/postgresql/11/main/postgresql.conf"
+
+
+# Set entry point
+# ENTRYPOINT ["./entrypoint.sh"]
+CMD ["./entrypoint.sh"]
+
+# docker compose -f docker-compose-ubuntu.yarn.yml build 
+
+# docker build -f Dockerfile-pg -t ubuntu-postgres .
+# docker run --rm -it ubuntu-postgres /bin/bash
+
+# service postgresql start

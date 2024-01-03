@@ -1,0 +1,155 @@
+# Use the official Python image as the base image
+FROM ubuntu:22.04 as spark-base
+
+# Disable interactive installation
+ARG DEBIAN_FRONTEND=noninteractive
+
+# Install tools required by the OS
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      software-properties-common \
+      sudo \
+      curl \
+      vim \
+      unzip \
+      rsync \
+      build-essential \
+      dos2unix \
+      nano \
+      python3 \
+    python3-pip \
+    openssh-client \
+    && apt-get clean 
+    
+# Print a message during the build process
+RUN echo "INSTALING JAVA version 1.8!"
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      openjdk-8-jdk \
+      maven \
+  && apt-get clean 
+    # && rm -rf /var/lib/apt/lists/*
+
+RUN echo "INSTALING wget"
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      wget \
+  && apt-get clean 
+
+# RUN service postgresql start
+# RUN service postgresql stop
+
+ARG SPARK_VERSION=3.2.0
+ARG HADOOP_VERSION=3.2.4
+ARG ZEPPELIN_VERSION=0.10.1
+ARG HIVE_VERSION=3.1.3
+
+# Setup the directories for Spark, Hadoop, Zeppelin installations
+ENV SPARK_HOME=/opt/spark
+ENV HADOOP_HOME=/opt/hadoop
+ENV ZEPPELIN_HOME=/opt/zeppelin
+ENV HIVE_HOME=/opt/hive
+
+RUN mkdir -p $HADOOP_HOME \
+    && mkdir -p $SPARK_HOME \
+    && mkdir -p $ZEPPELIN_HOME \
+    && mkdir -p $HIVE_HOME 
+
+WORKDIR $HIVE_HOME
+
+RUN curl -L https://dlcdn.apache.org/hive/hive-${HIVE_VERSION}/apache-hive-${HIVE_VERSION}-bin.tar.gz -o apache-hive-3.1.3-bin.tar.gz \
+ && tar xvzf apache-hive-${HIVE_VERSION}-bin.tar.gz --directory ${HIVE_HOME} --strip-components 1 \
+ && rm -rf apache-hive-${HIVE_VERSION}-bin.tar.gz
+
+# ENV PATH="$HIVE_HOME/bin:${PATH}"
+
+RUN echo "INSTALING POSTGRESQL"
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      postgresql postgresql-contrib \
+  && apt-get clean 
+
+# https://dlcdn.apache.org/hive/hive-3.1.3/apache-hive-3.1.3-bin.tar.gz
+
+# Download and install Spark
+# RUN curl -L https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop3.2.tgz -o spark-${SPARK_VERSION}-bin-hadoop3.2.tgz \
+#  && tar xvzf spark-${SPARK_VERSION}-bin-hadoop3.2.tgz --directory ${SPARK_HOME} --strip-components 1 \
+#  && rm -rf spark-${SPARK_VERSION}-bin-hadoop3.2.tgz
+
+
+# Download and install Hadoop
+# RUN curl -L https://archive.apache.org/dist/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz -o hadoop-${HADOOP_VERSION}-bin.tar.gz \
+#  && tar xfz hadoop-${HADOOP_VERSION}-bin.tar.gz --directory ${HADOOP_HOME} --strip-components 1 \
+#  && rm -rf hadoop-${HADOOP_VERSION}-bin.tar.gz
+
+
+# # Download and install apache Zeppelin
+# RUN curl -L https://dlcdn.apache.org/zeppelin/zeppelin-${ZEPPELIN_VERSION}/zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz -o zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz \
+#  && tar xfz zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz --directory ${ZEPPELIN_HOME} --strip-components 1 \
+#  && rm -rf zeppelin-${ZEPPELIN_VERSION}-bin-all.tgz
+
+# Create a new stage for the pyspark image
+# FROM spark-base as pyspark
+
+# # Install Python dependencies
+# COPY requirements/requirements.txt .
+# RUN pip3 install -r requirements.txt
+
+# # Set environment variables
+# ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+# ENV PATH="$ZEPPELIN_HOME/bin:$SPARK_HOME/sbin:/opt/spark/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:${PATH}"
+# ENV HADOOP_CONF_DIR="$HADOOP_HOME/etc/hadoop"
+# ENV LD_LIBRARY_PATH="$HADOOP_HOME/lib/native:${LD_LIBRARY_PATH}"
+
+# # Set users for HDFS and Yarn
+# ENV HDFS_NAMENODE_USER="root"
+# ENV HDFS_DATANODE_USER="root"
+# ENV HDFS_SECONDARYNAMENODE_USER="root"
+# ENV YARN_RESOURCEMANAGER_USER="root"
+# ENV YARN_NODEMANAGER_USER="root"
+
+# # Add JAVA_HOME to haddop-env.sh
+# RUN echo "export JAVA_HOME=${JAVA_HOME}" >> "$HADOOP_HOME/etc/hadoop/hadoop-env.sh"
+
+# # Copy configuration files
+# COPY yarn/spark-defaults.conf $SPARK_HOME/conf/
+# COPY yarn/*.xml $HADOOP_HOME/etc/hadoop/
+# COPY zeppelin/conf/* $ZEPPELIN_HOME/conf/
+
+# # Make binaries and scripts executable, set PYTHONPATH
+# RUN chmod u+x $SPARK_HOME/sbin/* && \
+#     chmod u+x $SPARK_HOME/bin/* && \
+#     chmod u+x $ZEPPELIN_HOME/bin/*
+
+# ENV PYTHONPATH=$SPARK_HOME/python/:$PYTHONPATH
+
+# Config Zeppelin 
+# RUN cp $ZEPPELIN_HOME/conf/zeppelin-env.sh.template $ZEPPELIN_HOME/conf/zeppelin-env.sh \
+#     && cp $ZEPPELIN_HOME/conf/zeppelin-site.xml.template $ZEPPELIN_HOME/conf/zeppelin-site.xml
+
+# Generate SSH keys and configure
+# RUN ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa && \
+#     cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys && \
+#     chmod 600 ~/.ssh/authorized_keys
+
+# COPY ssh_config ~/.ssh/config
+
+# Copy entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+
+RUN dos2unix /entrypoint.sh && chmod +x /entrypoint.sh
+
+EXPOSE 22
+
+# Set entry point
+ENTRYPOINT ["/entrypoint.sh"]
+# CMD service postgresql start && tail -f /dev/null
+# CMD ["/bin/bash"]
+# RUN su - postgres -c 'createuser --no-password your_user'
+# RUN su - postgres -c 'createuser -s your_user'
+RUN su - postgres -c 'createdb hivemetastoredb'
+# RUN su - postgres -c 'psql -c "ALTER USER your_user WITH PASSWORD '\''your_password'\''"'
+
+# docker compose -f docker-compose-ubuntu.yarn.yml build 
+# docker build -t ubuntu-java-hive .
+# docker run --rm -it ubuntu-java-hive /bin/bash
