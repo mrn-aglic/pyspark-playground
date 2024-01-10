@@ -34,12 +34,14 @@ then
   service postgresql start
 
   # For HIVE
-  hdfs dfs -mkdir /hive /hive/warehouse
-  hdfs dfs -chmod -R 775 /hive
+  hdfs dfs -mkdir -p /warehouse/tablespace/managed/hive
+  hdfs dfs -chmod -R 775 /warehouse
   # hdfs dfs -chown -R hive:hadoop /hive
+    echo "Created /warehouse/tablespace/managed/hive hdfs dir"
 
   # Create Hive schema (PostgreSQL)
   ${HIVE_HOME}/bin/schematool -initSchema -dbType postgres
+  
 
 elif [ "$SPARK_WORKLOAD" == "worker" ];
 then

@@ -3,12 +3,12 @@
 <configuration>
     <property>
         <name>hive.metastore.local</name>
-        <value>true</value>
+        <value>false</value>
     </property>
 
     <property>
         <name>hive.metastore.warehouse.dir</name>
-        <value>/hive/warehouse</value>
+        <value>/warehouse/tablespace/managed/hive</value>
     </property>
 
     <property>
@@ -18,7 +18,7 @@
 
     <property>
         <name>javax.jdo.option.ConnectionURL</name>
-        <value>jdbc:postgresql://localhost:5432/hivemetastoredb</value>
+        <value>jdbc:postgresql://postgresdb:5432/hivemetastoredb</value>
     </property>
 
     <property>
@@ -31,18 +31,27 @@
         <value>postgres</value>
     </property>
 
+    <!-- Set Spark master URI -->
     <property>
-        <name>hive.server2.thrift.port</name>
-        <value>10000</value>
+        <name>spark.master</name>
+        <value>spark://master:7077</value>
     </property>
+    
 
+    <!-- Set Spark home directory -->
     <property>
-        <name>hive.server2.enable.doAs</name>
-        <value>true</value>
+        <name>spark.home</name>
+        <value>/opt/spark</value>
     </property>
 
     <property>
         <name>hive.execution.engine</name>
+        <value>mr</value>
+    </property>
+
+    <!-- Set Spark Thrift Server mode -->
+    <property>
+        <name>hive.server2.execution.mode</name>
         <value>mr</value>
     </property>
 
@@ -52,7 +61,88 @@
     </property>
 
     <property>
+        <name>hive.metastore.uris</name>
+        <value>thrift://hive-metastore:9083</value>
+        <description>Thrift server hostname and port</description>
+    </property>
+
+    <property>
         <name>mapreduce.input.fileinputformat.input.dir.recursive</name>
         <value>true</value>
     </property>
+
+    <property>
+        <name>spark.eventLog.enabled</name>
+        <value>true</value>
+    </property>
+
+    
+
+    <property>
+		<name>datanucleus.autoCreateSchema</name>
+		<value>false</value>
+	</property>
+
+	<property>
+		<name>datanucleus.fixedDatastore</name>
+		<value>true</value>
+	</property>
+
+	<property>
+		<name>datanucleus.autoStartMechanism</name> 
+		<value>SchemaTable</value>
+	</property> 
+
+	<property>
+		<name>hive.metastore.event.db.notification.api.auth</name>
+		<value>false</value>
+		<description>
+       Should metastore do authorization against database notification related APIs such as get_next_notification.
+       If set to true, then only the superusers in proxy settings have the permission
+		</description>
+	</property>
+
+    <property>
+        <name>hive.server2.thrift.port</name>
+        <value>10000</value>
+    </property>
+
+    <property>
+        <name>hive.server2.enable.doAs</name>
+        <value>false</value>
+    </property>
+
+    
+    <property>
+        <name>hive.server2.transport.mode</name>
+        <value>binary</value>
+        <description>Set to http to enable HTTP transport mode</description>
+    </property>
+
+    <property>
+        <name>hive.server2.thrift.http.port</name>
+        <value>10002</value>
+        <description>HTTP port number to listen on</description>
+    </property>
+
+    <property>
+        <name>hive.server2.thrift.http.max.worker.threads</name>
+        <value>500</value>
+        <description>Maximum worker threads in the server pool</description>
+    </property>
+
+    <property>
+        <name>hive.server2.thrift.http.max.worker.threads</name>
+        <value>500</value>
+        <description>Maximum worker threads in the server pool</description>
+    </property>
+
+    <property>
+        <name>hive.server2.thrift.http.min.worker.threads</name>
+        <value>5</value>
+        <description>Maximum worker threads in the server pool</description>
+    </property>
+
+    <!-- $HIVE_HOME/bin/hive -service hiveserver2 -->
+
 </configuration>

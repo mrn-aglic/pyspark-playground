@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+    <property>
+        <name>hive.metastore.local</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>hive.metastore.warehouse.dir</name>
+        <value>/warehouse/tablespace/managed/hive</value>
+    </property>
+
+    <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>org.postgresql.Driver</value>
+    </property>
+
+    <property>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>jdbc:postgresql://localhost:5432/hivemetastoredb</value>
+    </property>
+
+    <property>
+        <name>javax.jdo.option.ConnectionUserName</name>
+        <value>postgres</value>
+    </property>
+
+    <property>
+        <name>javax.jdo.option.ConnectionPassword</name>
+        <value>postgres</value>
+    </property>
+
+    <property>
+        <name>hive.server2.thrift.port</name>
+        <value>10000</value>
+    </property>
+
+    <property>
+        <name>hive.server2.enable.doAs</name>
+        <value>false</value>
+    </property>
+
+    <!-- Set Spark master URI -->
+    <property>
+        <name>spark.master</name>
+        <value>yarn</value>
+    </property>
+
+    <!-- Set Spark home directory -->
+    <property>
+        <name>spark.home</name>
+        <value>${SPARK_HOME}</value>
+    </property>
+
+    <property>
+        <name>hive.execution.engine</name>
+        <value>spark</value>
+    </property>
+
+    <!-- Set Spark Thrift Server mode -->
+    <property>
+        <name>hive.server2.execution.mode</name>
+        <value>spark</value>
+    </property>
+
+<!-- Hive Metastore -->
+
+    <!-- <property>
+        <name>hive.metastore.port</name>
+        <value>9083</value>
+    </property> -->
+
+    <!-- <property>
+        <name>mapreduce.input.fileinputformat.input.dir.recursive</name>
+        <value>true</value>
+    </property> -->
+
+    <property>
+        <name>hive.metastore.uris</name>
+        <value>thrift://spark-yarn-master:9083</value>
+    </property>
+
+    <!-- <property>
+        <name>hive.metastore.event.listeners</name>
+        <value>org.apache.hadoop.hive.ql.security.authorization.AuthorizationMetaStoreEventListener</value>
+    </property> -->
+
+</configuration>

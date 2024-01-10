@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<configuration>
+    <property>
+        <name>yarn.resourcemanager.hostname</name>
+        <value>master</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.resource.cpu-vcores</name>
+        <value>4</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.resource.memory-mb</name>
+        <value>4096</value>
+    </property>
+    <property>
+        <name>yarn.scheduler.maximum-allocation-mb</name>
+        <value>2048</value>
+    </property>
+    <property>
+        <name>yarn.scheduler.minimum-allocation-mb</name>
+        <value>512</value>
+    </property>
+
+    <property>
+        <name>yarn.log-aggregation-enable</name>
+        <value>true</value>
+    </property>
+
+
+    <property>
+        <name>yarn.application.classpath</name>
+        <value>$HADOOP_HOME/hadoop/share/hadoop/mapreduce/*,$HADOOP_HOME/hadoop/share/hadoop/mapreduce/lib/*,$HADOOP_HOME/hadoop/share/hadoop/hdfs/*,$HADOOP_HOME/hadoop/share/hadoop/hdfs/lib/*,$HADOOP_HOME/hadoop/share/hadoop/common/lib/*,$HADOOP_HOME/hadoop/share/hadoop/common/*,$HADOOP_HOME/hadoop/share/hadoop/yarn/lib/*,$HADOOP_HOME/hadoop/share/hadoop/yarn/*</value>
+    </property>
+
+    <property>
+        <name>mapreduce.application.classpath</name>
+        <value>$HADOOP_HOME/hadoop/share/hadoop/mapreduce/*,$HADOOP_HOME/hadoop/share/hadoop/mapreduce/lib/*,$HADOOP_HOME/hadoop/share/hadoop/hdfs/*,$HADOOP_HOME/hadoop/share/hadoop/hdfs/lib/*,$HADOOP_HOME/hadoop/share/hadoop/common/lib/*,$HADOOP_HOME/hadoop/share/hadoop/common/*,$HADOOP_HOME/hadoop/share/hadoop/yarn/lib/*,$HADOOP_HOME/hadoop/share/hadoop/yarn/*</value>
+    </property>
+
+    
+</configuration>

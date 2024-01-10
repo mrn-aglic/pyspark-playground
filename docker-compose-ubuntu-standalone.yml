@@ -1,0 +1,121 @@
+version: '3.8'
+
+networks:
+  hadoop-network:
+    external: true
+
+services:
+  postgresdb:
+    image: postgres:11.5
+    hostname: hivemetastore
+    environment:
+      POSTGRES_PASSWORD: postgres
+    expose:
+      - 5432
+    volumes:
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hadoop-network
+
+  master:
+    container_name: master-ubuntu
+    build:
+      dockerfile: Dockerfile-ubuntu-standalone
+      context: .
+    image: da-hadoop-ubuntu-standalone
+    entrypoint: ['./entrypoint.sh', 'master']
+    volumes:
+      - ./book_data:/opt/spark/data
+      - ./spark_apps:/opt/spark/apps
+    env_file:
+      - .env.spark
+    ports:
+      - '9000:9000'
+      - '8080:8080' # Spark UI
+      - '9870:9870'
+      - '7077:7077'
+      - '8088:8088'
+      - '4040:4040'
+    depends_on:
+      - postgresdb
+    networks:
+      - hadoop-network
+
+  hive-metastore:
+    container_name: hive-metastore
+    image: da-hadoop-ubuntu-standalone
+    entrypoint: ['./entrypoint.sh', 'hive-metastore']
+    depends_on:
+      - master
+    ports:
+      - '9083:9083' # Hive Metastore service
+      - '10000:10000' # Hive Metastore Database 
+      - '10002:10002' # Hive UI
+    networks:
+      - hadoop-network
+
+  trino-master:
+    container_name: trino-master
+    image: da-hadoop-ubuntu-standalone
+    entrypoint: ['./entrypoint.sh', 'trino']
+    depends_on:
+      - master
+    ports:
+      - '8181:8181'
+      - '8443:8443'
+    networks:
+      - hadoop-network    
+
+  worker:
+    image: da-hadoop-ubuntu-standalone
+    entrypoint: ['./entrypoint.sh', 'worker']
+    depends_on:
+      - master
+    env_file:
+      - .env.spark
+    networks:
+      - hadoop-network
+
+  history-server:
+    container_name: history-server
+    image: da-hadoop-ubuntu-standalone
+    entrypoint: ['./entrypoint.sh', 'history']
+    depends_on:
+      - master
+    env_file:
+      - .env.spark
+    ports:
+      - '18080:18080'
+    networks:
+      - hadoop-network
+
+  jupyter:
+    container_name: da-hadoop-ubuntu-standalone-jupyter
+    image: da-hadoop-ubuntu-standalone
+    entrypoint: ['./entrypoint.sh', 'jupyter']
+    depends_on:
+      - master
+    env_file:
+      - .env.spark
+    ports:
+      - '8888:8888'
+    networks:
+      - hadoop-network
+
+  zeppelin:
+    container_name: zeppelin
+    image: da-hadoop-ubuntu-standalone
+    entrypoint: ['./entrypoint.sh', 'zeppelin']
+    depends_on:
+      - master
+    env_file:
+      - .env.spark
+    ports:
+      - '9995:9995'
+    networks:
+      - hadoop-network

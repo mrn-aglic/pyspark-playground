@@ -1,0 +1,8 @@
+coordinator=true
+node-scheduler.include-coordinator=false
+http-server.http.port=8181
+query.max-memory=10GB
+query.max-memory-per-node=1GB
+query.max-total-memory-per-node=2GB
+discovery-server.enabled=true
+discovery.uri=http://trino-master:8181

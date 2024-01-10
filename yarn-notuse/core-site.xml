@@ -3,6 +3,6 @@
 <configuration>
     <property>
         <name>fs.defaultFS</name>
-        <value>hdfs://spark-yarn-master:8080</value>
+        <value>hdfs://master:8020</value>
     </property>
 </configuration>

@@ -1,0 +1,10 @@
+host:docker
+
+'8020:8020'       -> Hadoop IPC port
+'9870:9870'       -> hdfs web ui
+'7077:7077'     -> spark master
+'8088:8088'     -> Yarn
+'9995:9995'     -> zeppelin
+'9083:9083'     -> Hive Metastore
+'10000:10000'   -> Hive server2
+      
