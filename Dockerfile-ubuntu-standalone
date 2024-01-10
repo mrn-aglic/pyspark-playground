@@ -5,7 +5,7 @@ FROM ubuntu:22.04 as linux-base
 ARG DEBIAN_FRONTEND=noninteractive
 
 ARG SPARK_VERSION=3.4.2
-ARG HADOOP_VERSION=3.3.6
+ARG HADOOP_VERSION=3.2.4
 ARG ZEPPELIN_VERSION=0.10.1
 ARG HIVE_VERSION=3.1.3
 
@@ -31,7 +31,7 @@ RUN apt-get update && \
 RUN echo "INSTALING JAVA version 1.8!"
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-      openjdk-11-jdk \
+      openjdk-8-jdk \
       maven \
   && apt-get clean 
     # && rm -rf /var/lib/apt/lists/*
@@ -53,9 +53,9 @@ RUN mkdir -p $HADOOP_HOME
 WORKDIR $HADOOP_HOME
 
 # Download and install Hadoop
-RUN curl -L https://dlcdn.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz -o hadoop-${HADOOP_VERSION}.tar.gz \
- && tar xfz hadoop-${HADOOP_VERSION}.tar.gz --directory ${HADOOP_HOME} --strip-components 1 \
- && rm -rf hadoop-${HADOOP_VERSION}.tar.gz
+RUN curl -L https://archive.apache.org/dist/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz -o hadoop-${HADOOP_VERSION}-bin.tar.gz \
+ && tar xfz hadoop-${HADOOP_VERSION}-bin.tar.gz --directory ${HADOOP_HOME} --strip-components 1 \
+ && rm -rf hadoop-${HADOOP_VERSION}-bin.tar.gz
 
 FROM hadoop-base as spark-base 
 
@@ -94,20 +94,11 @@ ENV JUPYTER_HOME=/opt/jupyter
 RUN mkdir -p $JUPYTER_HOME
 WORKDIR $JUPYTER_HOME
 
+# Make python3 can run pyhton
+RUN ln -s /usr/bin/python3 /usr/bin/python
+
 # INSTALL JUPYTER LAB
 RUN pip3 install ipykernel jupyterlab
-
-FROM jupyter_base as trino_base
-
-ENV TRINO_HOME=/opt/trino 
-RUN mkdir -p $TRINO_HOME
-WORKDIR $TRINO_HOME
-
-RUN curl -L https://repo1.maven.org/maven2/io/trino/trino-server/435/trino-server-435.tar.gz -o trino-server-435.tar.gz \
- && tar xvzf trino-server-435.tar.gz --directory ${TRINO_HOME} --strip-components 1 \
- && rm -rf trino-server-435.tar.gz
-
-COPY trino/* /opt/trino/etc/
 
 # Install Python dependencies
 COPY requirements/requirements.txt .
@@ -115,7 +106,7 @@ RUN pip3 install -r requirements.txt
 
 # Set environment variables
 ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
-ENV PATH="$TRINO_HOME/bin:$ZEPPELIN_HOME/bin:$SPARK_HOME/sbin:/opt/spark/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$HIVE_HOME/bin:${PATH}"
+ENV PATH="$ZEPPELIN_HOME/bin:$SPARK_HOME/sbin:/opt/spark/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$HIVE_HOME/bin:${PATH}"
 ENV HADOOP_CONF_DIR="$HADOOP_HOME/etc/hadoop"
 ENV LD_LIBRARY_PATH="$HADOOP_HOME/lib/native:${LD_LIBRARY_PATH}"
 
@@ -136,13 +127,13 @@ COPY hadoop/*.xml $HADOOP_HOME/etc/hadoop/
 
 COPY zeppelin/conf/* $ZEPPELIN_HOME/conf/
 
-COPY hive/*.xml $HIVE_HOME/conf/
+COPY hive/hive-site.xml $HIVE_HOME/conf/
+COPY hive/hive-config.sh $HIVE_HOME/bin/
 
 # Make binaries and scripts executable, set PYTHONPATH
 RUN chmod u+x $SPARK_HOME/sbin/* && \
     chmod u+x $SPARK_HOME/bin/* && \
     chmod u+x $ZEPPELIN_HOME/bin/* 
-    # chmod u+x $TRINO_HOME/* 
 
     # chmod u+x $HIVE_HOME/bin/* 
 

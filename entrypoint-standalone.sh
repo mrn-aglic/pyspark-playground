@@ -46,9 +46,11 @@ then
   
   echo "Start Hive Metastore service"
   ${HIVE_HOME}/bin/hive --service metastore &
-  ${HIVE_HOME}/bin/hive --service hiveserver2 --hiveconf hive.server2.thrift.port=10000 --hiveconf hive.root.logger=INFO,console &
+  echo "Success running metastore on port 9083"
 
-  echo "Success running metastore and hiveserver"
+
+  echo "Start service hiveserver2"
+  ${HIVE_HOME}/bin/hive --service hiveserver2 --hiveconf hive.server2.thrift.port=10000 --hiveconf hive.root.logger=INFO,console &
 
 elif [ "$WORKLOAD" == "trino" ];
 then
@@ -58,7 +60,6 @@ then
 elif [ "$WORKLOAD" == "worker" ];
 then
   hdfs namenode -format
-
   # start the worker node processes
   hdfs --daemon start datanode
   # yarn --daemon start nodemanager
