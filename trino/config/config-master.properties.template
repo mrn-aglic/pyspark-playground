@@ -5,4 +5,4 @@ query.max-memory=10GB
 query.max-memory-per-node=1GB
 query.max-total-memory-per-node=2GB
 discovery-server.enabled=true
-discovery.uri=http://trino-master:8181
+discovery.uri=http://localhost:8181

@@ -1,0 +1,3 @@
+connector.name=hadoop-hdfs
+hdfs.authentication.type=NONE
+hdfs.uri=hdfs://10.1.111.31:9000

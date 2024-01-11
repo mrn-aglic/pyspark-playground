@@ -1,0 +1,34 @@
+version: '3.8'
+
+networks:
+  hadoop-network:
+    external: true
+
+services:
+  coordinator:
+    build:
+      dockerfile: Dockerfile
+      context: ./trino-coordinator
+    image: "kevinity310/trino-coordinator:435"
+    ports:
+      - "8181:8080"
+    container_name: "coordinator"
+    command: ["http://coordinator:8080", "coordinator"]
+    networks:
+      - hadoop-network
+
+  worker:
+    build:
+      dockerfile: Dockerfile
+      context: ./trino-worker
+    image: "kevinity310/trino-worker:435"
+    command: ["http://coordinator:8080"]
+    depends_on:
+      - coordinator
+    expose:
+      - 8080
+    networks:
+      - hadoop-network
+
+# docker compose -f docker-compose-trino-cluster.yml up -d
+# docker compose -f docker-compose-trino-cluster.yml up --scale worker=2

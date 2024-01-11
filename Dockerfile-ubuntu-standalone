@@ -28,9 +28,10 @@ RUN apt-get update && \
     && apt-get clean 
     
 # Print a message during the build process
-RUN echo "INSTALING JAVA version 1.8!"
+RUN echo "INSTALING JAVA version 1.8 && 17!"
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+      openjdk-17-jdk \
       openjdk-8-jdk \
       maven \
   && apt-get clean 
@@ -105,7 +106,8 @@ COPY requirements/requirements.txt .
 RUN pip3 install -r requirements.txt
 
 # Set environment variables
-ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+# ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+
 ENV PATH="$ZEPPELIN_HOME/bin:$SPARK_HOME/sbin:/opt/spark/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$HIVE_HOME/bin:${PATH}"
 ENV HADOOP_CONF_DIR="$HADOOP_HOME/etc/hadoop"
 ENV LD_LIBRARY_PATH="$HADOOP_HOME/lib/native:${LD_LIBRARY_PATH}"
@@ -127,7 +129,8 @@ COPY hadoop/*.xml $HADOOP_HOME/etc/hadoop/
 
 COPY zeppelin/conf/* $ZEPPELIN_HOME/conf/
 
-COPY hive/hive-site.xml $HIVE_HOME/conf/
+COPY hive/conf/hive-site.xml $HIVE_HOME/conf/
+COPY hive/conf/hive-env.sh $HIVE_HOME/conf/
 COPY hive/hive-config.sh $HIVE_HOME/bin/
 
 # Make binaries and scripts executable, set PYTHONPATH

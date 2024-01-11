@@ -59,27 +59,20 @@ services:
     networks:
       - hadoop-network
 
-  trino-master:
-    container_name: trino-master
-    image: da-hadoop-ubuntu-standalone
-    entrypoint: ['./entrypoint.sh', 'trino']
-    depends_on:
-      - master
-    ports:
-      - '8181:8181'
-      - '8443:8443'
-    networks:
-      - hadoop-network    
-
   worker:
-    image: da-hadoop-ubuntu-standalone
-    entrypoint: ['./entrypoint.sh', 'worker']
-    depends_on:
-      - master
-    env_file:
-      - .env.spark
-    networks:
-      - hadoop-network
+      image: da-hadoop-ubuntu-standalone
+      entrypoint: ['./entrypoint.sh', 'worker']
+      depends_on:
+        - master
+      env_file:
+        - .env.spark
+      networks:
+        - hadoop-network
+      deploy:
+        resources:
+          limits:
+            cpus: '4'  # Set the desired CPU limit (e.g., half of a core)
+            memory: '2G'  # Set the desired memory limit (e.g., 512 megabytes)
 
   history-server:
     container_name: history-server
@@ -110,6 +103,19 @@ services:
   zeppelin:
     container_name: zeppelin
     image: da-hadoop-ubuntu-standalone
+    entrypoint: ['./entrypoint.sh', 'zeppelin']
+    depends_on:
+      - master
+    env_file:
+      - .env.spark
+    ports:
+      - '9995:9995'
+    networks:
+      - hadoop-network
+
+  trino-coordinator:
+    container_name: trino-coordinator 
+    image: da-hadoop-ubuntu-standalone 
     entrypoint: ['./entrypoint.sh', 'zeppelin']
     depends_on:
       - master

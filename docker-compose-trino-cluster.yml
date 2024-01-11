@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  coordinator:
+    build:
+      dockerfile: Dockerfile
+      context: ./trino/trino-coordinator
+    image: "kevinity310/trino-coordinator:435"
+    ports:
+      - "8181:8080"
+    container_name: "coordinator"
+    command: coordinator
+
+  worker0:
+    build:
+      dockerfile: Dockerfile
+      context: ./trino/trino-worker
+    image: "kevinity310/trino-worker:435"
+    container_name: "worker0"
+    ports:
+      - "8182:8081"
+    command: worker0
+
+# docker compose -f docker-compose-trino-cluster.yml up -d
