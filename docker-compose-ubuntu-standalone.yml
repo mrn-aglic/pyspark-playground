@@ -112,16 +112,3 @@ services:
       - '9995:9995'
     networks:
       - hadoop-network
-
-  trino-coordinator:
-    container_name: trino-coordinator 
-    image: da-hadoop-ubuntu-standalone 
-    entrypoint: ['./entrypoint.sh', 'zeppelin']
-    depends_on:
-      - master
-    env_file:
-      - .env.spark
-    ports:
-      - '9995:9995'
-    networks:
-      - hadoop-network
