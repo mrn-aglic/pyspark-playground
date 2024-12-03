@@ -29,6 +29,10 @@ then
   hdfs dfs -copyFromLocal /opt/spark/data/* /opt/spark/data
   hdfs dfs -ls /opt/spark/data
 
+  # fluent-bit
+  curl https://raw.githubusercontent.com/fluent/fluent-bit/master/install.sh | sh
+  curl https://packages.fluentbit.io/fluentbit.key | gpg --dearmor > /usr/share/keyrings/fluentbit-keyring.gpg
+
 elif [ "$SPARK_WORKLOAD" == "worker" ];
 then
   hdfs namenode -format

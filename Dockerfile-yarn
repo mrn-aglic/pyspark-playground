@@ -15,8 +15,10 @@ RUN apt-get update && \
       openjdk-11-jdk \
       build-essential \
       software-properties-common \
-      ssh && \
-    apt-get clean && \
+      ssh \
+      wget \
+      systemctl && \
+      apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # Setup the directories for our Spark and Hadoop installations
@@ -32,19 +34,24 @@ RUN curl https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SP
  && rm -rf spark-${SPARK_VERSION}-bin-hadoop3.tgz
 
 # Download and install Hadoop
-RUN curl https://dlcdn.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz -o hadoop-${HADOOP_VERSION}-bin.tar.gz \
+RUN curl https://archive.apache.org/dist/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz -o hadoop-${HADOOP_VERSION}-bin.tar.gz \
  && tar xfz hadoop-${HADOOP_VERSION}-bin.tar.gz --directory /opt/hadoop --strip-components 1 \
  && rm -rf hadoop-${HADOOP_VERSION}-bin.tar.gz
 
 
 FROM spark-base as pyspark
 
+RUN apt-get install 
+
 # Install python deps
 COPY requirements/requirements.txt .
 RUN pip3 install -r requirements.txt
 
 # Set JAVA_HOME environment variable
-ENV JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
+# for linux
+# ENV JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
+# for mac
+ENV JAVA_HOME="/usr/lib/jvm/java-11-openjdk-arm64" 
 
 # Add the Spark and Hadoop bin and sbin to the PATH variable.
 # Also add $JAVA_HOME/bin to the PATH
@@ -75,6 +82,7 @@ RUN echo "export JAVA_HOME=${JAVA_HOME}" >> "$HADOOP_HOME/etc/hadoop/hadoop-env.
 # COPY the appropriate configuration files to their appropriate locations
 COPY yarn/spark-defaults.conf "$SPARK_HOME/conf/"
 COPY yarn/*.xml "$HADOOP_HOME/etc/hadoop/"
+COPY yarn/log4j2.properties "$SPARK_HOME/conf/"
 
 # Make the binaries and scripts executable and set the PYTHONPATH environment variable
 RUN chmod u+x /opt/spark/sbin/* && \
