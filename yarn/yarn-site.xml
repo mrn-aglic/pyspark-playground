@@ -29,4 +29,15 @@
         <name>yarn.log-aggregation-enable</name>
         <value>true</value>
     </property>
+    
+    <property>
+        <name>yarn.nodemanager.log-dirs</name>
+        <value>/var/log/hadoop-yarn/nodemanager</value>
+    </property>
+
+    <property>
+        <name>yarn.nodemanager.remote-app-log-dir</name>
+        <value>file:/var/log/hadoop-yarn/apps</value>
+    </property>
+
 </configuration>

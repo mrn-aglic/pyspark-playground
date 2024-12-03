@@ -85,6 +85,10 @@ COPY yarn/spark-defaults.conf "$SPARK_HOME/conf/"
 COPY yarn/*.xml "$HADOOP_HOME/etc/hadoop/"
 COPY yarn/log4j2.properties "$SPARK_HOME/conf/"
 
+ENV YARN_LOG_DIR="/var/log/hadoop-yarn/nodemanager"
+ENV YARN_APP_LOG_DIR="/var/log/hadoop-yarn/apps"
+RUN mkdir -p $YARN_LOG_DIR && mkdir -p $YARN_APP_LOG_DIR
+
 # Make the binaries and scripts executable and set the PYTHONPATH environment variable
 RUN chmod u+x /opt/spark/sbin/* && \
     chmod u+x /opt/spark/bin/*
