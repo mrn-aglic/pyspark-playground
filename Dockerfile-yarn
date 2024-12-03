@@ -24,8 +24,9 @@ RUN apt-get update && \
 # Setup the directories for our Spark and Hadoop installations
 ENV SPARK_HOME=${SPARK_HOME:-"/opt/spark"}
 ENV HADOOP_HOME=${HADOOP_HOME:-"/opt/hadoop"}
+ENV SPARK_LOG_PATH=${SPARK_LOG_PATH:-"/var/log/spark/apps"}
 
-RUN mkdir -p ${HADOOP_HOME} && mkdir -p ${SPARK_HOME}
+RUN mkdir -p ${HADOOP_HOME} && mkdir -p ${SPARK_HOME} && mkdir -p ${SPARK_LOG_PATH}
 WORKDIR ${SPARK_HOME}
 
 # Download and install Spark
