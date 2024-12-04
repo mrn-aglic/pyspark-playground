@@ -40,4 +40,15 @@
         <value>file:/var/log/hadoop-yarn/apps</value>
     </property>
 
+    <property>
+        <name>yarn.log-aggregation-enable</name>
+        <value>true</value>
+    </property>
+
+    <!-- Log aggregation retention policy -->
+    <property>
+        <name>yarn.log-aggregation.retain-seconds</name>
+        <value>604800</value> <!-- 7 days -->
+    </property>
+    
 </configuration>

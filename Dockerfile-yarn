@@ -42,8 +42,6 @@ RUN curl https://archive.apache.org/dist/hadoop/common/hadoop-${HADOOP_VERSION}/
 
 FROM spark-base as pyspark
 
-RUN apt-get install 
-
 # Install python deps
 COPY requirements/requirements.txt .
 RUN pip3 install -r requirements.txt
@@ -89,6 +87,18 @@ ENV YARN_LOG_DIR="/var/log/hadoop-yarn/nodemanager"
 ENV YARN_APP_LOG_DIR="/var/log/hadoop-yarn/apps"
 RUN mkdir -p $YARN_LOG_DIR && mkdir -p $YARN_APP_LOG_DIR
 
+ENV FLUNTBIT_HOME="/opt/fluent-bit"
+
+RUN curl https://raw.githubusercontent.com/fluent/fluent-bit/master/install.sh | sh
+RUN curl https://packages.fluentbit.io/fluentbit.key | gpg --dearmor > /usr/share/keyrings/fluentbit-keyring.gpg
+
+RUN apt-get update && \
+  apt-get install fluent-bit
+  
+#RUN mkdir -p $FLUNTBIT_HOME
+
+COPY fluentbit/ $FLUNTBIT_HOME
+
 # Make the binaries and scripts executable and set the PYTHONPATH environment variable
 RUN chmod u+x /opt/spark/sbin/* && \
     chmod u+x /opt/spark/bin/*
@@ -104,6 +114,10 @@ COPY ssh_config ~/.ssh/config
 
 # Copy appropriate entrypoint script
 COPY entrypoint-yarn.sh entrypoint.sh
+
+# Copy Example pi.py 
+
+COPY examples/pi.py /opt/spark/examples/src/main/python/pi.py
 
 EXPOSE 22
 
