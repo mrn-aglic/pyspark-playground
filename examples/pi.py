@@ -40,7 +40,7 @@ class WarnFilter(logging.Filter):
 
 # 로거 생성
 logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 # 핸들러 생성
 info_handler = logging.StreamHandler()

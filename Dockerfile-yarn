@@ -83,9 +83,12 @@ COPY yarn/spark-defaults.conf "$SPARK_HOME/conf/"
 COPY yarn/*.xml "$HADOOP_HOME/etc/hadoop/"
 COPY yarn/log4j2.properties "$SPARK_HOME/conf/"
 
-ENV YARN_LOG_DIR="/var/log/hadoop-yarn/nodemanager"
+# YARN_LOG_DIR -> HADOOP_LOG_DIR
+ENV HADOOP_LOG_DIR="/var/log/hadoop-yarn/nodemanager" 
 ENV YARN_APP_LOG_DIR="/var/log/hadoop-yarn/apps"
-RUN mkdir -p $YARN_LOG_DIR && mkdir -p $YARN_APP_LOG_DIR
+
+RUN mkdir -p $HADOOP_LOG_DIR && mkdir -p $YARN_APP_LOG_DIR
+RUN chmod 777 $HADOOP_LOG_DIR && chmod 777 $YARN_APP_LOG_DIR
 
 ENV FLUNTBIT_HOME="/opt/fluent-bit"
 
