@@ -54,5 +54,6 @@ ENV PYTHONPATH=$SPARK_HOME/python/:$PYTHONPATH
 
 # Copy appropriate entrypoint script
 COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
 
 ENTRYPOINT ["./entrypoint.sh"]
