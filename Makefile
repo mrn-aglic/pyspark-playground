@@ -1,44 +1,44 @@
 build:
-	docker-compose build
+	docker compose build
 
 build-yarn:
-	docker-compose -f docker-compose.yarn.yml build
+	docker compose -f docker-compose.yarn.yml build
 
 build-yarn-nc:
-	docker-compose -f docker-compose.yarn.yml build --no-cache
+	docker compose -f docker-compose.yarn.yml build --no-cache
 
 build-nc:
-	docker-compose build --no-cache
+	docker compose build --no-cache
 
 build-progress:
-	docker-compose build --no-cache --progress=plain
+	docker compose build --no-cache --progress=plain
 
 down:
-	docker-compose down --volumes --remove-orphans
+	docker compose down --volumes --remove-orphans
 
 down-yarn:
-	docker-compose -f docker-compose.yarn.yml down --volumes --remove-orphans
+	docker compose -f docker-compose.yarn.yml down --volumes --remove-orphans
 
 run:
-	make down && docker-compose up
+	make down && docker compose up
 
 run-scaled:
-	make down && docker-compose up --scale spark-worker=3
+	make down && docker compose up --scale spark-worker=3
 
 run-d:
-	make down && docker-compose up -d
+	make down && docker compose up -d
 
 run-yarn:
-	make down-yarn && docker-compose -f docker-compose.yarn.yml up
+	make down-yarn && docker compose -f docker-compose.yarn.yml up
 
 run-yarn-scaled:
-	make down-yarn && docker-compose -f docker-compose.yarn.yml up --scale spark-yarn-worker=3
+	make down-yarn && docker compose -f docker-compose.yarn.yml up --scale spark-yarn-worker=3
 
 stop:
-	docker-compose stop
+	docker compose stop
 
 stop-yarn:
-	docker-compose -f docker-compose.yarn.yml stop
+	docker compose -f docker-compose.yarn.yml stop
 
 
 submit:
